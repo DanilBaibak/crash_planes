@@ -64,14 +64,15 @@ US_STATES = [
     ('VT', 'Vermont'),
     ('VA', 'Virginia'),
     ('WA', 'Washington'),
-    ('WA', 'Washington DC'), # exception
-    ('WA', 'Washingon'), # exception
+    ('WA', 'Washington DC'),  # exception
+    ('WA', 'Washingon'),  # exception
     ('WV', 'West Virginia'),
     ('WI', 'Wisconsin'),
     ('WY', 'Wyoming')
 ]
 
 US_STATES_FLAT = [entry[0] for entry in US_STATES] + [entry[1] for entry in US_STATES]
+
 
 def country_of_loc(location):
     """
@@ -126,13 +127,12 @@ def split_fatalities(entry):
 
 
 def clean_database(df):
-    "Return copy of database after cleaning."
+    """Return copy of database after cleaning."""
 
     dfc = df.copy()
 
     # drop useless columns
-    # dfc = dfc.drop(['Unnamed: 0', 'Unnamed: 0.1', 'Registration:', 'Flight #:', 'cn / ln:'], axis=1)
-    dfc = dfc.drop(['Unnamed: 0', 'Registration:', 'Flight #:', 'cn / ln:'], axis=1)
+    dfc = dfc.drop(['Unnamed: 0', 'Unnamed: 0.1', 'Registration:', 'Flight #:', 'cn / ln:'], axis=1)
 
     # remove trailing ':' in index/column names
     dfc = dfc.rename(columns={cn: cn[:-1] for cn in list(dfc.columns)})
@@ -141,7 +141,6 @@ def clean_database(df):
     dfc.replace(to_replace='?', value=np.nan, inplace=True)
 
     # make datetimeindex from date/time fields
-    # dfc = dfc.set_index(dfc['Date'])
     dfc = dfc.set_index(pd.DatetimeIndex(dfc['Date']))
     dfc.sort_index(inplace=True)
     dfc = dfc.drop(['Date'], axis=1)
