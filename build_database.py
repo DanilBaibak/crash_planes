@@ -110,10 +110,9 @@ def build_one_database(years=[], verbose=True):
 
 
 if __name__ == '__main__':
-    download_separate_years(years=range(1921, 1923))
-    # download_separate_years(years=range(1921, 2017))
+    download_separate_years(years=range(1921, 2017))
 
     # build full database from single yearly files
-    # df_all = build_one_database(range(1921, 2017))
-    # path = 'data/data.csv'
-    # df_all.to_csv(path)
+    df_all = build_one_database(range(1921, 2017))
+    path = 'data/data.csv'
+    df_all.to_csv(path)
