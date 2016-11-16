@@ -23,6 +23,10 @@ def location_to_lat_lon(place):
     """
     Get lat/lon dict or None for some place.
     """
+
+    # geolocator doesn't work with 'USSR'
+    place = place.replace(', USSR', '').strip()
+
     try:
         # Can raise geopy.exc.GeocoderServiceError,
         # so be gentle and give it some time to breathe.
@@ -35,6 +39,7 @@ def location_to_lat_lon(place):
         print('* ' + place, None)
         return None
     print(place, (location.latitude, location.longitude))
+
     return {'lat': location.latitude, 'lon': location.longitude}
 
 
@@ -50,19 +55,18 @@ def get_geolocations(df, previous=None):
         }
     """
     res = previous or {}
-    for name in ['Origin', 'Destination']:
-        s = df.groupby(name).size().sort_values(ascending=True)
-        for loc, count in s.items():
-            # ignore unspecific place
-            if loc in ('Sightseeing', 'Training', 'Test flight', 'Military exercises', 'aerial surveillance'):
-                print('* Ignoring: %s' % loc)
-                continue
-            # ignore known place
-            if res.get(loc, None) is not None:
-                print('* Already found: %s' % loc)
-            else:
-                lat_lon = location_to_lat_lon(loc)
-                res[loc] = lat_lon
+    s = df.groupby('Location').size().sort_values(ascending=True)
+    for loc, count in s.items():
+        # ignore unspecific place
+        if loc in ('Sightseeing', 'Training', 'Test flight', 'Military exercises', 'aerial surveillance'):
+            print('* Ignoring: %s' % loc)
+            continue
+        # ignore known place
+        if res.get(loc, None) is not None:
+            print('* Already found: %s' % loc)
+        else:
+            lat_lon = location_to_lat_lon(loc)
+            res[loc] = lat_lon
     return res
 
 
