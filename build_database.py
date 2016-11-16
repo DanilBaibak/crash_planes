@@ -77,7 +77,7 @@ def get_database(years=[], verbose=True):
 
 
 def download_separate_years(years=[], verbose=True):
-    "Scrape and store all data from `planecrashinfo.com` as single CSV files."
+    """Scrape and store all data from `planecrashinfo.com` as single CSV files."""
 
     # Best practice to avoid downloading identical files many times...
 

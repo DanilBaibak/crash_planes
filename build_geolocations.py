@@ -54,7 +54,7 @@ def get_geolocations(df, previous=None):
         s = df.groupby(name).size().sort_values(ascending=True)
         for loc, count in s.items():
             # ignore unspecific place
-            if loc in ('Sightseeing', 'Training', 'Test flight', 'Military exercises', 'aerial survelliance'):
+            if loc in ('Sightseeing', 'Training', 'Test flight', 'Military exercises', 'aerial surveillance'):
                 print('* Ignoring: %s' % loc)
                 continue
             # ignore known place
