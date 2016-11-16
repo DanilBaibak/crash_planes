@@ -39,7 +39,6 @@ US_STATES = [
     ('MA', 'Massachusetts'),
     ('MI', 'Michigan'),
     ('MN', 'Minnesota'),
-    ('MN', 'Minnisota'), # typo
     ('MS', 'Mississippi'),
     ('MO', 'Missouri'),
     ('MT', 'Montana'),
@@ -64,14 +63,41 @@ US_STATES = [
     ('VT', 'Vermont'),
     ('VA', 'Virginia'),
     ('WA', 'Washington'),
-    ('WA', 'Washington DC'),  # exception
-    ('WA', 'Washingon'),  # exception
     ('WV', 'West Virginia'),
     ('WI', 'Wisconsin'),
     ('WY', 'Wyoming')
 ]
 
 US_STATES_FLAT = [entry[0] for entry in US_STATES] + [entry[1] for entry in US_STATES]
+
+
+def clean_location(location):
+    """
+    Clean locations
+
+    :param location:
+    :return:
+    """
+
+    if type(location) != str:
+        return np.nan
+
+    # clean outliers
+    outliers = ['Over', 'Over', 'Near', 'Off', 'off', 'Territory of', 'South of', 'the', 'coast']
+    for outlier in outliers:
+        location = location.replace(outlier, '').strip()
+
+    # clean typos
+    typos = [
+        ('United States', 'USA'), ('Unied Kingdom', 'United Kingdom'), ('UK', 'United Kingdom'),
+        ('United States', 'USA'), ('Russian', 'Russia'), ('Irkutsk Russia', 'Russia'),
+        ('Washington DC', 'Washington'), ('Washington D.C.', 'Washington'), ('Washingon', 'Washington'),
+        ('Minnisota', 'Minnesota'),
+    ]
+    for search, replace in typos:
+        location = location.replace(search, replace)
+
+    return location
 
 
 def country_of_loc(location):
@@ -83,23 +109,11 @@ def country_of_loc(location):
     """
     if type(location) != str:
         return '?'
+
     country = location.split(',')[-1].strip()
-
-    # clean outliers
-    outliers = ['.', 'Over', 'Over', 'Near', 'Off', 'off', 'Territory of', 'South of', 'the', 'coast']
-    for outlier in outliers:
-        country = country.replace(outlier, '').strip()
-
-    # clean typos
-    typos = [
-        ('United States', 'USA'), ('Unied Kingdom', 'United Kingdom'), ('UK', 'United Kingdom'),
-        ('United States', 'USA'), ('Russian', 'Russia'), ('Irkutsk Russia', 'Russia')
-    ]
-    for search, replace in typos:
-        country = country.replace(search, replace)
-
     if country in US_STATES_FLAT:
         country = 'USA'
+
     return country
 
 
@@ -155,6 +169,9 @@ def clean_database(df):
 
     # make Ground field numeric (or nan)
     dfc['Ground'] = dfc['Ground'].apply(pd.to_numeric)
+
+    # cleaning
+    dfc['Location'] = dfc['Location'].apply(lambda x: clean_location(x))
 
     # add country field extracted from accident location
     dfc['Location_Country'] = dfc['Location'].apply(lambda x: country_of_loc(x))
