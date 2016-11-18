@@ -140,6 +140,35 @@ def split_fatalities(entry):
     return dict(list(zip(names, counts)))
 
 
+def get_accident_type(df):
+    """
+    Try to recognize type of the accident
+    :param df:
+    :return:
+    """
+    accident_type = ''
+    accidents_type = []
+
+    # unfortunately data is quite dirty
+    for (location, origin, destination) in df[['Location', 'Origin', 'Destination']].values:
+        if location is np.NaN or origin is np.NaN or destination is np.NaN:
+            # unknown
+            accident_type = 0
+        elif location == origin or location in origin or origin in location:
+            # take-off
+            accident_type = 1
+        elif location == destination or location in destination or destination in location:
+            # landing
+            accident_type = 2
+        else:
+            # others
+            accident_type = 3
+
+        accidents_type.append(accident_type)
+
+    return accidents_type
+
+
 def clean_database(df):
     """Return copy of database after cleaning."""
 
@@ -177,5 +206,8 @@ def clean_database(df):
     dfc['Location_Country'] = dfc['Location'].apply(lambda x: country_of_loc(x))
 
     dfc.rename(columns={'AC  Type': 'AC_Type'}, inplace=True)
+
+    # add type of the accident
+    dfc['Accident_type'] = get_accident_type(dfc)
 
     return dfc
