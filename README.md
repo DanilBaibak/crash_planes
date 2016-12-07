@@ -13,6 +13,8 @@ it using a more analytic/interactive/visual approach. To do so, standard tools f
 Python-based data science stack are used, like [Jupyter] (http://jupyter.org), [Pandas] (http://pandas.pydata.org), 
 and [Matplotlib] (http://www.matplotlib.org)/[Basemap] (http://matplotlib.org/basemap/).
 
+Also worked to analysing text from accidents summary. For that use [nltk](http://www.nltk.org/) for text tokenize, [KMeans](http://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html) for clusterization and [gensim](https://radimrehurek.com/gensim/) for topic modeling.
+
 **N.B.** This is work in progress… If you have any suggestion, please feel free to raise an issue or provide a pull request.
 
 
@@ -46,7 +48,11 @@ Exploration
 -----------
 
 To get started exploring the data, just run the Jupyter notebook as follows:
-
 ```sh
 jupyter-notebook planecrashinfo.ipynb
+```
+
+Or for the accidents summary evaluation:
+```sh
+jupyter-notebook summaries_investigation.ipynb
 ```
